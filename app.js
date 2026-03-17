@@ -1,7 +1,17 @@
 const SUPABASE_URL = "https://fssybhcybzfcheivvsia.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZzc3liaGN5YnpmY2hlaXZ2c2lhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxMTg4NDEsImV4cCI6MjA4ODY5NDg0MX0.oc7jjEjWlB6GtshhAToYkOSdlsdX-jMLqcx3XYYj3rU";
 
-const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const { createClient } = supabase;
+
+const db = createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY,
+  {
+    auth: {
+      persistSession: false   // 🔥 VERY IMPORTANT
+    }
+  }
+);
 
 const TABLES = {
   booking: "customer_booking_register",
