@@ -31,6 +31,19 @@ The app is configured to insert into:
 
 If your table names differ, update `TABLES` in `app.js`.
 
+
+## Job sheet field mapping
+
+The Job page now follows your table columns and inserts with these exact keys:
+
+- `Booking ID`, `Setmore ID`, `Service ID Category`, `Date`, `Month`, `Year`
+- `Vehicle Plat`, `Customer Name`, `Toll [RM]`, `Mileage [KM]`
+- `Start Time`, `End Time`, `Duration (hrs)`, `On-Site Condition`, `Dry Ice Used (KG)`
+- `Air Compressor Fuel Top up [YES/NO]`, `Air Compressor Fuel Top up [Volumn/L]`
+- `Generator Fuel Top up [YES/NO]`, `Generator Fuel Top up [Volumn/L]`
+- `Pre-Service Photo Ref`, `Post-Service Photo Ref`, `Post-Service Video Ref`
+- `Job Status`, `Receipt Issued`, `Technician Remarks`
+
 ## Local run
 
 ```bash

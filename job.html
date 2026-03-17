@@ -15,7 +15,7 @@
     <header class="app-header card">
       <div>
         <p class="badge">Cleanje Booking System</p>
-        <h1>Job Update</h1>
+        <h1>Job Sheet</h1>
       </div>
       <nav class="nav-links" aria-label="Main navigation">
         <a href="index.html">Booking</a>
@@ -32,14 +32,119 @@
         </label>
 
         <label>
-          Technician
-          <select id="jobTechnician" required>
-            <option value="Thina">Thina</option>
-            <option value="Thina & Thanish">Thina & Thanish</option>
-            <option value="Thina, Thanish & Vishnu">Thina, Thanish & Vishnu</option>
-            <option value="Thina & Vishnu">Thina & Vishnu</option>
-            <option value="Thanish & Vishnu">Thanish & Vishnu</option>
+          Setmore ID
+          <input id="jobSetmoreId" />
+        </label>
+
+        <label>
+          Service ID Category
+          <select id="jobServiceCategory" required>
+            <option value="CVX1">CVX1</option>
+            <option value="CVX2">CVX2</option>
+            <option value="CVX4">CVX4</option>
+            <option value="CVX6">CVX6</option>
           </select>
+        </label>
+
+        <label>
+          Date
+          <input id="jobDate" type="date" required />
+        </label>
+
+        <label>
+          Month
+          <input id="jobMonth" readonly />
+        </label>
+
+        <label>
+          Year
+          <input id="jobYear" readonly />
+        </label>
+
+        <label>
+          Vehicle Plat
+          <input id="jobVehiclePlat" />
+        </label>
+
+        <label>
+          Customer Name
+          <input id="jobCustomerName" required />
+        </label>
+
+        <label>
+          Toll [RM]
+          <input id="jobToll" type="number" min="0" step="0.01" value="0" />
+        </label>
+
+        <label>
+          Mileage [KM]
+          <input id="jobMileage" type="number" min="0" step="0.1" value="0" />
+        </label>
+
+        <label>
+          Start Time
+          <input id="jobStartTime" type="time" />
+        </label>
+
+        <label>
+          End Time
+          <input id="jobEndTime" type="time" />
+        </label>
+
+        <label>
+          Duration (hrs)
+          <input id="jobDuration" type="number" min="0" step="0.01" readonly />
+        </label>
+
+        <label>
+          On-Site Condition
+          <textarea id="jobOnSiteCondition" rows="2"></textarea>
+        </label>
+
+        <label>
+          Dry Ice Used (KG)
+          <input id="jobDryIceUsed" type="number" min="0" step="0.1" value="0" />
+        </label>
+
+        <label>
+          Air Compressor Fuel Top up [YES/NO]
+          <select id="jobAirCompressorFuelTopUp">
+            <option value="NO">NO</option>
+            <option value="YES">YES</option>
+          </select>
+        </label>
+
+        <label>
+          Air Compressor Fuel Top up [Volumn/L]
+          <input id="jobAirCompressorFuelTopUpVolume" type="number" min="0" step="0.1" value="0" />
+        </label>
+
+        <label>
+          Generator Fuel Top up [YES/NO]
+          <select id="jobGeneratorFuelTopUp">
+            <option value="NO">NO</option>
+            <option value="YES">YES</option>
+          </select>
+        </label>
+
+        <label>
+          Generator Fuel Top up [Volumn/L]
+          <input id="jobGeneratorFuelTopUpVolume" type="number" min="0" step="0.1" value="0" />
+        </label>
+
+        <label>
+          Pre-Service Photo Ref
+          <input id="jobPreServicePhotoRef" />
+        </label>
+
+        <label>
+          Post-Service Photo Ref
+          <input id="jobPostServicePhotoRef" />
+        </label>
+
+        <label>
+          Post-Service Video Ref
+          <input id="jobPostServiceVideoRef" />
         </label>
 
         <label>
@@ -55,16 +160,19 @@
         </label>
 
         <label>
-          Visit Date
-          <input id="jobDate" type="date" required />
+          Receipt Issued
+          <select id="jobReceiptIssued">
+            <option value="NO">NO</option>
+            <option value="YES">YES</option>
+          </select>
         </label>
 
         <label class="full-width">
-          Job Notes
-          <textarea id="jobNotes" rows="4" placeholder="Add inspection or job completion notes"></textarea>
+          Technician Remarks
+          <textarea id="jobTechnicianRemarks" rows="3"></textarea>
         </label>
 
-        <button type="submit" class="full-width">Save Job Update</button>
+        <button type="submit" class="full-width">Save Job Sheet</button>
       </form>
       <div id="jobMessage" class="result" role="status" aria-live="polite"></div>
     </section>

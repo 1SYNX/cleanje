@@ -119,6 +119,32 @@ async function submitBooking(event) {
   }
 }
 
+function syncJobDateParts() {
+  const dateInput = document.getElementById("jobDate");
+  const monthInput = document.getElementById("jobMonth");
+  const yearInput = document.getElementById("jobYear");
+  if (!dateInput || !monthInput || !yearInput || !dateInput.value) return;
+
+  const dateObj = new Date(dateInput.value);
+  monthInput.value = String(dateObj.getMonth() + 1).padStart(2, "0");
+  yearInput.value = String(dateObj.getFullYear());
+}
+
+function syncJobDuration() {
+  const startInput = document.getElementById("jobStartTime");
+  const endInput = document.getElementById("jobEndTime");
+  const durationInput = document.getElementById("jobDuration");
+  if (!startInput || !endInput || !durationInput || !startInput.value || !endInput.value) return;
+
+  const [sh, sm] = startInput.value.split(":").map(Number);
+  const [eh, em] = endInput.value.split(":").map(Number);
+  let startMinutes = sh * 60 + sm;
+  let endMinutes = eh * 60 + em;
+  if (endMinutes < startMinutes) endMinutes += 24 * 60;
+  const duration = (endMinutes - startMinutes) / 60;
+  durationInput.value = duration.toFixed(2);
+}
+
 async function submitJob(event) {
   event.preventDefault();
   const bookingId = document.getElementById("jobBookingId").value.trim();
@@ -127,22 +153,45 @@ async function submitJob(event) {
     await ensureSupabaseAuth();
 
     const payload = {
-      booking_id: bookingId,
-      technician: document.getElementById("jobTechnician").value,
-      job_status: document.getElementById("jobStatus").value,
-      visit_date: document.getElementById("jobDate").value,
-      notes: document.getElementById("jobNotes").value.trim(),
+      "Booking ID": bookingId,
+      "Setmore ID": document.getElementById("jobSetmoreId").value.trim(),
+      "Service ID Category": document.getElementById("jobServiceCategory").value,
+      Date: document.getElementById("jobDate").value,
+      Month: document.getElementById("jobMonth").value,
+      Year: document.getElementById("jobYear").value,
+      "Vehicle Plat": document.getElementById("jobVehiclePlat").value.trim(),
+      "Customer Name": document.getElementById("jobCustomerName").value.trim(),
+      "Toll [RM]": Number(document.getElementById("jobToll").value || 0),
+      "Mileage [KM]": Number(document.getElementById("jobMileage").value || 0),
+      "Start Time": document.getElementById("jobStartTime").value,
+      "End Time": document.getElementById("jobEndTime").value,
+      "Duration (hrs)": Number(document.getElementById("jobDuration").value || 0),
+      "On-Site Condition": document.getElementById("jobOnSiteCondition").value.trim(),
+      "Dry Ice Used (KG)": Number(document.getElementById("jobDryIceUsed").value || 0),
+      "Air Compressor Fuel Top up [YES/NO]": document.getElementById("jobAirCompressorFuelTopUp").value,
+      "Air Compressor Fuel Top up [Volumn/L]": Number(document.getElementById("jobAirCompressorFuelTopUpVolume").value || 0),
+      "Generator Fuel Top up [YES/NO]": document.getElementById("jobGeneratorFuelTopUp").value,
+      "Generator Fuel Top up [Volumn/L]": Number(document.getElementById("jobGeneratorFuelTopUpVolume").value || 0),
+      "Pre-Service Photo Ref": document.getElementById("jobPreServicePhotoRef").value.trim(),
+      "Post-Service Photo Ref": document.getElementById("jobPostServicePhotoRef").value.trim(),
+      "Post-Service Video Ref": document.getElementById("jobPostServiceVideoRef").value.trim(),
+      "Job Status": document.getElementById("jobStatus").value,
+      "Receipt Issued": document.getElementById("jobReceiptIssued").value,
+      "Technician Remarks": document.getElementById("jobTechnicianRemarks").value.trim(),
     };
 
     const { error } = await db.from(TABLES.job).insert([payload]);
     if (error) throw error;
 
     localStorage.setItem("booking_id", bookingId);
-    setMessage("jobMessage", "Job update saved successfully.", "success");
+    setMessage("jobMessage", "Job sheet saved successfully.", "success");
     event.target.reset();
+    const dateInput = document.getElementById("jobDate");
+    if (dateInput) dateInput.value = getTodayString();
+    syncJobDateParts();
     fillBookingIdFields();
   } catch (error) {
-    setMessage("jobMessage", `Unable to save job update: ${error.message}`, "error");
+    setMessage("jobMessage", `Unable to save job sheet: ${error.message}`, "error");
   }
 }
 
@@ -186,6 +235,14 @@ function setupPage() {
     const dateInput = document.getElementById(id);
     if (dateInput && !dateInput.value) dateInput.value = getTodayString();
   });
+
+  const jobDateInput = document.getElementById("jobDate");
+  const jobStartInput = document.getElementById("jobStartTime");
+  const jobEndInput = document.getElementById("jobEndTime");
+  if (jobDateInput) jobDateInput.addEventListener("change", syncJobDateParts);
+  if (jobStartInput) jobStartInput.addEventListener("change", syncJobDuration);
+  if (jobEndInput) jobEndInput.addEventListener("change", syncJobDuration);
+  syncJobDateParts();
 
   ensureSupabaseAuth().catch((err) => {
     setMessage("message", err.message, "error");
