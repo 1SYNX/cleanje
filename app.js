@@ -10,6 +10,7 @@ const TABLES = {
 };
 
 let authReady = false;
+let bookingCache = [];
 
 function getTodayString() {
   return new Date().toISOString().slice(0, 10);
@@ -104,10 +105,7 @@ async function submitBooking(event) {
     };
 
     const { error } = await db.from(TABLES.booking).insert([payload]);
-
-    if (error) {
-      throw error;
-    }
+    if (error) throw error;
 
     document.getElementById("bookingId").textContent = bookingId;
     localStorage.setItem("booking_id", bookingId);
@@ -143,6 +141,78 @@ function syncJobDuration() {
   if (endMinutes < startMinutes) endMinutes += 24 * 60;
   const duration = (endMinutes - startMinutes) / 60;
   durationInput.value = duration.toFixed(2);
+}
+
+function fillJobFormFromBooking(booking) {
+  if (!booking) return;
+
+  const setValue = (id, value) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.value = value || "";
+  };
+
+  setValue("jobBookingId", booking.booking_id);
+  setValue("jobCustomerName", booking.customer_name);
+  setValue("jobVehiclePlat", booking.vehicle_plate);
+  setValue("jobDate", booking.date || getTodayString());
+
+  const serviceSelect = document.getElementById("jobServiceCategory");
+  if (serviceSelect && booking.service_id_category) {
+    const exists = Array.from(serviceSelect.options).some((option) => option.value === booking.service_id_category);
+    if (exists) serviceSelect.value = booking.service_id_category;
+  }
+
+  localStorage.setItem("booking_id", booking.booking_id || "");
+  syncJobDateParts();
+}
+
+async function loadBookingOptions() {
+  const selector = document.getElementById("jobBookingSelector");
+  if (!selector) return;
+
+  await ensureSupabaseAuth();
+  const { data, error } = await db
+    .from(TABLES.booking)
+    .select("booking_id, customer_name, vehicle_plate, date, service_id_category")
+    .order("date", { ascending: false })
+    .limit(200);
+
+  if (error) {
+    setMessage("jobMessage", `Unable to load bookings: ${error.message}`, "error");
+    return;
+  }
+
+  bookingCache = data || [];
+
+  selector.innerHTML = '<option value="">Select booking ID...</option>';
+  bookingCache.forEach((booking) => {
+    const option = document.createElement("option");
+    option.value = booking.booking_id;
+    option.textContent = `${booking.booking_id} - ${booking.customer_name || "No Name"}`;
+    selector.appendChild(option);
+  });
+
+  const localId = localStorage.getItem("booking_id") || "";
+  if (localId) {
+    selector.value = localId;
+    const selected = bookingCache.find((item) => item.booking_id === localId);
+    if (selected) fillJobFormFromBooking(selected);
+  }
+}
+
+function onJobBookingSelected(event) {
+  const selectedId = event.target.value;
+  if (!selectedId) return;
+
+  const selected = bookingCache.find((item) => item.booking_id === selectedId);
+  if (!selected) {
+    setMessage("jobMessage", "Selected booking details not found.", "error");
+    return;
+  }
+
+  fillJobFormFromBooking(selected);
+  setMessage("jobMessage", `Loaded booking ${selectedId} details into job sheet.`, "success");
 }
 
 async function submitJob(event) {
@@ -229,6 +299,7 @@ function setupPage() {
   const bookingForm = document.getElementById("bookingForm");
   const jobForm = document.getElementById("jobForm");
   const paymentForm = document.getElementById("paymentForm");
+  const jobBookingSelector = document.getElementById("jobBookingSelector");
   const dateInputIds = ["date", "jobDate", "paymentDate"];
 
   dateInputIds.forEach((id) => {
@@ -242,13 +313,16 @@ function setupPage() {
   if (jobDateInput) jobDateInput.addEventListener("change", syncJobDateParts);
   if (jobStartInput) jobStartInput.addEventListener("change", syncJobDuration);
   if (jobEndInput) jobEndInput.addEventListener("change", syncJobDuration);
+  if (jobBookingSelector) jobBookingSelector.addEventListener("change", onJobBookingSelected);
   syncJobDateParts();
 
-  ensureSupabaseAuth().catch((err) => {
-    setMessage("message", err.message, "error");
-    setMessage("jobMessage", err.message, "error");
-    setMessage("paymentMessage", err.message, "error");
-  });
+  ensureSupabaseAuth()
+    .then(() => loadBookingOptions())
+    .catch((err) => {
+      setMessage("message", err.message, "error");
+      setMessage("jobMessage", err.message, "error");
+      setMessage("paymentMessage", err.message, "error");
+    });
 
   if (bookingForm) bookingForm.addEventListener("submit", submitBooking);
   if (jobForm) jobForm.addEventListener("submit", submitJob);

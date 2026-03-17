@@ -15,6 +15,7 @@ A mobile-first frontend project for GitHub Pages with Supabase integration.
 - Booking ID displayed after submission.
 - Booking ID stored in `localStorage` key `booking_id`.
 - Supabase write integration for booking, job, and payment modules.
+- Job page can load/select existing bookings and auto-populate customer name, vehicle plat, service category, and booking date.
 - Responsive card-based UI.
 
 ## Supabase setup note
