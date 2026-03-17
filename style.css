@@ -1,31 +1,147 @@
-body {
-  font-family: Arial;
-  background:#f5f6fa;
+:root {
+  --bg: #f3f6fc;
+  --card: #ffffff;
+  --text: #12213a;
+  --muted: #5f6c84;
+  --primary: #2e6bff;
+  --border: #dbe3f5;
+  --success: #0f9d58;
+  --danger: #d93025;
 }
 
-.container {
-  max-width:800px;
-  margin:auto;
-  padding:15px;
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 16px;
+  display: grid;
+  gap: 14px;
 }
 
 .card {
-  background:#fff;
-  padding:15px;
-  border-radius:10px;
-  box-shadow:0 2px 6px rgba(0,0,0,0.1);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 8px 20px rgba(18, 33, 58, 0.06);
+  padding: 16px;
 }
 
-input, select, textarea {
-  width:100%;
-  padding:10px;
-  margin:5px 0;
+.app-header {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+h1 {
+  margin: 6px 0 0;
+  font-size: 1.4rem;
+}
+
+.badge {
+  margin: 0;
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.nav-links {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: var(--muted);
+  font-weight: 600;
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  border-radius: 10px;
+}
+
+.nav-links a.active {
+  color: var(--primary);
+  border-color: var(--primary);
+  background: rgba(46, 107, 255, 0.08);
+}
+
+.form-grid {
+  display: grid;
+  gap: 12px;
+}
+
+label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+input,
+select,
+textarea,
+button {
+  font-family: inherit;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  font-size: 0.95rem;
+  padding: 11px 12px;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 2px solid rgba(46, 107, 255, 0.25);
+  border-color: var(--primary);
 }
 
 button {
-  background:#007bff;
-  color:white;
-  padding:12px;
-  width:100%;
-  border:none;
+  border: none;
+  background: var(--primary);
+  color: white;
+  font-weight: 600;
+}
+
+.result {
+  margin-top: 14px;
+  min-height: 20px;
+  color: var(--muted);
+}
+
+.result.success {
+  color: var(--success);
+}
+
+.result.error {
+  color: var(--danger);
+}
+
+.booking-output {
+  margin-bottom: 0;
+}
+
+@media (min-width: 640px) {
+  .form-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .full-width {
+    grid-column: 1 / -1;
+  }
+
+  .app-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
 }
