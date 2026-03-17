@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cleanje | Job</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <main class="page">
+    <header class="app-header card">
+      <div>
+        <p class="badge">Cleanje Booking System</p>
+        <h1>Job Sheet</h1>
+      </div>
+      <nav class="nav-links" aria-label="Main navigation">
+        <a href="index.html">Booking</a>
+        <a class="active" href="job.html">Job</a>
+        <a href="payment.html">Payment</a>
+      </nav>
+    </header>
+
+    <section class="card">
+      <form id="jobForm" class="form-grid">
+        <label class="full-width">
+          Select Existing Booking
+          <select id="jobBookingSelector">
+            <option value="">Select booking ID...</option>
+          </select>
+        </label>
+
+        <label>
+          Booking ID
+          <input id="jobBookingId" required />
+        </label>
+
+        <label>
+          Mileage [KM]
+          <input id="jobMileage" type="number" min="0" step="0.1" value="0" />
+        </label>
+
+        <label>
+          On-Site Condition
+          <select id="jobOnSiteCondition" required>
+            <option value="">Select condition</option>
+            <option value="Clean">Clean</option>
+            <option value="Dirty">Dirty</option>
+            <option value="Very Dirty">Very Dirty</option>
+          </select>
+        </label>
+
+        <label>
+          Job Status
+          <select id="jobStatus" required>
+            <option value="">Select job status</option>
+            <option value="New">New</option>
+            <option value="Confirmed">Confirmed</option>
+            <option value="In-Progress">In-Progress</option>
+            <option value="Completed">Completed</option>
+            <option value="Cancelled">Cancelled</option>
+            <option value="Postponed">Postponed</option>
+          </select>
+        </label>
+
+        <label class="full-width">
+          Technician Remarks
+          <textarea id="jobTechnicianRemarks" rows="3"></textarea>
+        </label>
+
+        <button type="submit" class="full-width">Save Job Sheet</button>
+      </form>
+      <div id="jobMessage" class="result" role="status" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
