@@ -1,82 +1,169 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cleanje Booking</title>
-
-<link rel="stylesheet" href="style.css">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cleanje | Booking</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-
 <body>
+  <main class="page">
+    <header class="app-header card">
+      <div>
+        <p class="badge">Cleanje Booking System</p>
+        <h1>Customer Booking Register</h1>
+      </div>
+      <nav class="nav-links" aria-label="Main navigation">
+        <a class="active" href="index.html">Booking</a>
+        <a href="job.html">Job</a>
+        <a href="payment.html">Payment</a>
+      </nav>
+    </header>
 
-<div class="container">
-<h2>Cleanje Booking</h2>
+    <section class="card">
+      <form id="bookingForm" class="form-grid">
+        <label>
+          booking_id (auto)
+          <input id="bookingIdInput" readonly />
+        </label>
 
-<div class="card">
+        <label>
+          date
+          <input id="date" type="date" required />
+        </label>
 
-<input id="name" placeholder="Customer Name">
-<input id="plate" placeholder="Vehicle Plate">
+        <label>
+          month
+          <input id="bookingMonth" readonly />
+        </label>
 
-<select id="customerType">
-<option>Residential</option>
-<option>Commercial</option>
-<option>Industrial</option>
-</select>
+        <label>
+          year
+          <input id="bookingYear" readonly />
+        </label>
 
-<select id="package">
-<option value="CVX1">CVX1 - RM150</option>
-<option value="CVX2">CVX2 - RM170</option>
-<option value="CVX4">CVX4 - RM190</option>
-<option value="CVX6">CVX6 - RM210</option>
-</select>
+        <label>
+          customer_type
+          <select id="customerType" required>
+            <option value="Residential">Residential</option>
+            <option value="Commercial">Commercial</option>
+            <option value="Industrial">Industrial</option>
+          </select>
+        </label>
 
-<input type="date" id="date">
+        <label>
+          vehicle_plate
+          <input id="plate" />
+        </label>
 
-<select id="timeSlot">
-<option>Morning</option>
-<option>Afternoon</option>
-<option>Evening</option>
-</select>
+        <label>
+          customer_name
+          <input id="name" required />
+        </label>
 
-<select id="crew">
-<option>Thina</option>
-<option>Thina & Thanish</option>
-<option>Thina, Thanish & Vishnu</option>
-<option>Thina & Vishnu</option>
-<option>Thanish & Vishnu</option>
-</select>
+        <label>
+          contact_no
+          <input id="contactNo" />
+        </label>
 
-<select id="source">
-<option>WhatsApp</option>
-<option>Instagram</option>
-<option>Facebook</option>
-<option>Referral</option>
-<option>Walk-in</option>
-<option>Website</option>
-<option>Phone Call</option>
-<option>Other</option>
-</select>
+        <label>
+          email
+          <input id="email" type="email" />
+        </label>
 
-<select id="status">
-<option>New</option>
-<option>Confirmed</option>
-<option>In-Progress</option>
-<option>Completed</option>
-<option>Cancelled</option>
-<option>Postponed</option>
-</select>
+        <label class="full-width">
+          service_address
+          <textarea id="address" rows="3" required></textarea>
+        </label>
 
-<textarea id="address" placeholder="Service Address"></textarea>
+        <label>
+          service_id_category
+          <select id="package" required>
+            <option value="CVX1">CVX1</option>
+            <option value="CVX2">CVX2</option>
+            <option value="CVX4">CVX4</option>
+            <option value="CVX6">CVX6</option>
+          </select>
+        </label>
 
-<button onclick="submitBooking()">Submit Booking</button>
+        <label>
+          service_charge_rm
+          <input id="serviceCharge" type="number" min="0" step="0.01" value="0" />
+        </label>
 
-<p><b>Booking ID:</b> <span id="bookingId">-</span></p>
+        <label>
+          time_slot
+          <select id="timeSlot" required>
+            <option value="Morning">Morning</option>
+            <option value="Afternoon">Afternoon</option>
+            <option value="Evening">Evening</option>
+          </select>
+        </label>
 
-</div>
-</div>
+        <label>
+          time
+          <input id="bookingTime" type="time" />
+        </label>
 
-<script src="app.js"></script>
+        <label>
+          assigned_crew
+          <select id="crew" required>
+            <option value="Thina">Thina</option>
+            <option value="Thina & Thanish">Thina & Thanish</option>
+            <option value="Thina, Thanish & Vishnu">Thina, Thanish & Vishnu</option>
+            <option value="Thina & Vishnu">Thina & Vishnu</option>
+            <option value="Thanish & Vishnu">Thanish & Vishnu</option>
+          </select>
+        </label>
 
+        <label>
+          booking_source
+          <select id="source" required>
+            <option value="WhatsApp">WhatsApp</option>
+            <option value="Instagram">Instagram</option>
+            <option value="Facebook">Facebook</option>
+            <option value="Referral">Referral</option>
+            <option value="Walk-in">Walk-in</option>
+            <option value="Website">Website</option>
+            <option value="Phone Call">Phone Call</option>
+            <option value="Other">Other</option>
+          </select>
+        </label>
+
+        <label>
+          booking_status
+          <select id="status" required>
+            <option value="New">New</option>
+            <option value="Confirmed">Confirmed</option>
+            <option value="In-Progress">In-Progress</option>
+            <option value="Completed">Completed</option>
+            <option value="Cancelled">Cancelled</option>
+            <option value="Postponed">Postponed</option>
+          </select>
+        </label>
+
+        <label class="full-width">
+          remarks
+          <textarea id="bookingRemarks" rows="3"></textarea>
+        </label>
+
+        <label>
+          created_at (auto)
+          <input id="bookingCreatedAt" readonly />
+        </label>
+
+        <button type="submit" class="full-width">Save Booking</button>
+      </form>
+
+      <div id="message" class="result" role="status" aria-live="polite"></div>
+      <p class="booking-output"><strong>Latest booking_id:</strong> <span id="bookingId">-</span></p>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
 </body>
 </html>

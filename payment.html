@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cleanje | Payment Sheet</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <main class="page">
+    <header class="app-header card">
+      <div>
+        <p class="badge">Cleanje Booking System</p>
+        <h1>Payment Sheet</h1>
+      </div>
+      <nav class="nav-links" aria-label="Main navigation">
+        <a href="index.html">Booking</a>
+        <a href="job.html">Job</a>
+        <a class="active" href="payment.html">Payment</a>
+      </nav>
+    </header>
+
+    <section class="card">
+      <form id="paymentForm" class="form-grid">
+        <label>
+          id (auto)
+          <input id="paymentRecordId" readonly />
+        </label>
+
+        <label>
+          booking_id
+          <input id="paymentBookingId" required />
+        </label>
+
+        <label>
+          amount_paid_rm
+          <input id="paymentAmount" type="number" min="0" step="0.01" required />
+        </label>
+
+        <label>
+          payment_method
+          <select id="paymentMethod" required>
+            <option value="Cash">Cash</option>
+            <option value="Bank Transfer">Bank Transfer</option>
+            <option value="Card">Card</option>
+            <option value="E-wallet">E-wallet</option>
+          </select>
+        </label>
+
+        <label>
+          payment_status
+          <select id="paymentStatus" required>
+            <option value="">Select status</option>
+            <option value="Pending">Pending</option>
+            <option value="Paid">Paid</option>
+            <option value="Failed">Failed</option>
+            <option value="Refunded">Refunded</option>
+          </select>
+        </label>
+
+        <label>
+          created_at (auto)
+          <input id="paymentCreatedAt" readonly />
+        </label>
+
+        <button type="submit" class="full-width">Save Payment Sheet</button>
+      </form>
+      <div id="paymentMessage" class="result" role="status" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
