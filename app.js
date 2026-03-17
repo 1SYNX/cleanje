@@ -9,7 +9,6 @@ const TABLES = {
   payment: "payment_sheet",
 };
 
-let authReady = false;
 let bookingCache = [];
 
 function getTodayString() {
