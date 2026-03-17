@@ -1,82 +1,162 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cleanje Booking</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cleanje | Booking</title>
 
-<link rel="stylesheet" href="style.css">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
+  <main class="page">
 
-<div class="container">
-<h2>Cleanje Booking</h2>
+    <!-- HEADER -->
+    <header class="app-header card">
+      <div>
+        <p class="badge">Cleanje Booking System</p>
+        <h1>New Booking</h1>
+      </div>
 
-<div class="card">
+      <nav class="nav-links">
+        <a class="active" href="index.html">Booking</a>
+        <a href="job.html">Job</a>
+        <a href="payment.html">Payment</a>
+      </nav>
+    </header>
 
-<input id="name" placeholder="Customer Name">
-<input id="plate" placeholder="Vehicle Plate">
+    <!-- FORM -->
+    <section class="card">
 
-<select id="customerType">
-<option>Residential</option>
-<option>Commercial</option>
-<option>Industrial</option>
-</select>
+      <form id="bookingForm" class="form-grid">
 
-<select id="package">
-<option value="CVX1">CVX1 - RM150</option>
-<option value="CVX2">CVX2 - RM170</option>
-<option value="CVX4">CVX4 - RM190</option>
-<option value="CVX6">CVX6 - RM210</option>
-</select>
+        <!-- Booking ID (AUTO) -->
+        <label>
+          Booking ID
+          <input id="bookingIdInput" readonly placeholder="Auto-generated" />
+        </label>
 
-<input type="date" id="date">
+        <!-- DATE -->
+        <label>
+          Booking Date
+          <input type="date" id="date" required />
+        </label>
 
-<select id="timeSlot">
-<option>Morning</option>
-<option>Afternoon</option>
-<option>Evening</option>
-</select>
+        <!-- MONTH -->
+        <label>
+          Month
+          <input id="bookingMonth" readonly />
+        </label>
 
-<select id="crew">
-<option>Thina</option>
-<option>Thina & Thanish</option>
-<option>Thina, Thanish & Vishnu</option>
-<option>Thina & Vishnu</option>
-<option>Thanish & Vishnu</option>
-</select>
+        <!-- YEAR -->
+        <label>
+          Year
+          <input id="bookingYear" readonly />
+        </label>
 
-<select id="source">
-<option>WhatsApp</option>
-<option>Instagram</option>
-<option>Facebook</option>
-<option>Referral</option>
-<option>Walk-in</option>
-<option>Website</option>
-<option>Phone Call</option>
-<option>Other</option>
-</select>
+        <!-- CUSTOMER TYPE (DYNAMIC) -->
+        <label>
+          Customer Type
+          <select id="customerType" required></select>
+        </label>
 
-<select id="status">
-<option>New</option>
-<option>Confirmed</option>
-<option>In-Progress</option>
-<option>Completed</option>
-<option>Cancelled</option>
-<option>Postponed</option>
-</select>
+        <!-- VEHICLE -->
+        <label>
+          Vehicle Plate
+          <input id="plate" placeholder="Enter vehicle plate" />
+        </label>
 
-<textarea id="address" placeholder="Service Address"></textarea>
+        <!-- NAME -->
+        <label>
+          Customer Name
+          <input id="name" required placeholder="Enter customer name" />
+        </label>
 
-<button onclick="submitBooking()">Submit Booking</button>
+        <!-- CONTACT -->
+        <label>
+          Contact No
+          <input id="contactNo" placeholder="e.g. 0123456789" />
+        </label>
 
-<p><b>Booking ID:</b> <span id="bookingId">-</span></p>
+        <!-- EMAIL -->
+        <label>
+          Email
+          <input id="email" type="email" placeholder="name@example.com" />
+        </label>
 
-</div>
-</div>
+        <!-- ADDRESS -->
+        <label class="full-width">
+          Service Address
+          <textarea id="address" rows="3" required></textarea>
+        </label>
 
-<script src="app.js"></script>
+        <!-- PACKAGE (DYNAMIC) -->
+        <label>
+          Service Package
+          <select id="package" required></select>
+        </label>
+
+        <!-- PRICE AUTO -->
+        <label>
+          Service Charge (RM)
+          <input id="price" readonly />
+        </label>
+
+        <!-- TIME SLOT -->
+        <label>
+          Time Slot
+          <select id="timeSlot" required></select>
+        </label>
+
+        <!-- TIME -->
+        <label>
+          Time
+          <input id="bookingTime" type="time" />
+        </label>
+
+        <!-- CREW -->
+        <label>
+          Assigned Crew
+          <select id="crew" required></select>
+        </label>
+
+        <!-- SOURCE -->
+        <label>
+          Booking Source
+          <select id="source" required></select>
+        </label>
+
+        <!-- STATUS -->
+        <label>
+          Booking Status
+          <select id="status" required></select>
+        </label>
+
+        <!-- REMARKS -->
+        <label class="full-width">
+          Remarks
+          <textarea id="remarks" rows="3"></textarea>
+        </label>
+
+        <!-- SUBMIT -->
+        <button type="submit" class="full-width">Submit Booking</button>
+
+      </form>
+
+      <!-- RESULT -->
+      <div id="message" class="result"></div>
+      <p><strong>Latest Booking ID:</strong> <span id="bookingId">-</span></p>
+
+    </section>
+
+  </main>
+
+  <!-- SCRIPT -->
+  <script type="module" src="js/booking.js"></script>
 
 </body>
 </html>
