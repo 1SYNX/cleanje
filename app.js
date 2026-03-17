@@ -165,6 +165,18 @@ function syncJobDuration() {
   durationInput.value = ((endMinutes - startMinutes) / 60).toFixed(2);
 }
 
+
+function normalizeBookingRow(row) {
+  if (!row) return null;
+  return {
+    bookingId: row["Booking ID"] || row.booking_id || "",
+    customerName: row["Customer Name"] || row.customer_name || "",
+    vehiclePlat: row["Vehicle Plat"] || row.vehicle_plate || "",
+    serviceIdCategory: row["Service ID Category"] || row.service_id_category || "",
+    date: row.Date || row.date || "",
+  };
+}
+
 function fillJobFormFromBooking(booking) {
   if (!booking) return;
 
@@ -173,19 +185,19 @@ function fillJobFormFromBooking(booking) {
     if (el) el.value = value || "";
   };
 
-  setValue("jobBookingId", booking["Booking ID"]);
-  setValue("jobCustomerName", booking["Customer Name"]);
-  setValue("jobVehiclePlat", booking["Vehicle Plat"]);
-  setValue("jobDate", booking.Date || getTodayString());
+  setValue("jobBookingId", booking.bookingId);
+  setValue("jobCustomerName", booking.customerName);
+  setValue("jobVehiclePlat", booking.vehiclePlat);
+  setValue("jobDate", booking.date || getTodayString());
 
-  const serviceCategory = booking["Service ID Category"];
+  const serviceCategory = booking.serviceIdCategory;
   const serviceSelect = document.getElementById("jobServiceCategory");
   if (serviceSelect && serviceCategory) {
     const exists = Array.from(serviceSelect.options).some((opt) => opt.value === serviceCategory);
     if (exists) serviceSelect.value = serviceCategory;
   }
 
-  localStorage.setItem("booking_id", booking["Booking ID"] || "");
+  localStorage.setItem("booking_id", booking.bookingId || "");
   syncJobDateParts();
 }
 
@@ -194,31 +206,67 @@ async function loadBookingOptions() {
   if (!selector) return;
 
   await ensureSupabaseAuth();
-  const { data, error } = await db
+
+  selector.innerHTML = '<option value="">Loading bookings...</option>';
+
+  let rows = [];
+  let queryError = null;
+
+  const spacedQuery = await db
     .from(TABLES.booking)
     .select('"Booking ID", "Customer Name", "Vehicle Plat", "Service ID Category", "Date"')
     .order("Date", { ascending: false })
     .limit(200);
 
-  if (error) {
-    setMessage("jobMessage", `Unable to load bookings: ${error.message}`, "error");
+  if (!spacedQuery.error) {
+    rows = spacedQuery.data || [];
+  } else {
+    queryError = spacedQuery.error;
+    const snakeQuery = await db
+      .from(TABLES.booking)
+      .select("booking_id, customer_name, vehicle_plate, service_id_category, date")
+      .order("date", { ascending: false })
+      .limit(200);
+
+    if (!snakeQuery.error) {
+      rows = snakeQuery.data || [];
+      queryError = null;
+    } else {
+      queryError = snakeQuery.error;
+    }
+  }
+
+  if (queryError) {
+    selector.innerHTML = '<option value="">Unable to load bookings</option>';
+    setMessage(
+      "jobMessage",
+      `Unable to load bookings list. Check SELECT policy on ${TABLES.booking}. ${queryError.message}`,
+      "error",
+    );
     return;
   }
 
-  bookingCache = data || [];
+  bookingCache = rows.map(normalizeBookingRow).filter((item) => item && item.bookingId);
+
   selector.innerHTML = '<option value="">Select booking ID...</option>';
   bookingCache.forEach((booking) => {
     const option = document.createElement("option");
-    option.value = booking["Booking ID"];
-    option.textContent = `${booking["Booking ID"]} - ${booking["Customer Name"] || "No Name"}`;
+    option.value = booking.bookingId;
+    option.textContent = `${booking.bookingId} - ${booking.customerName || "No Name"}`;
     selector.appendChild(option);
   });
 
   const localId = localStorage.getItem("booking_id") || "";
   if (localId) {
     selector.value = localId;
-    const selected = bookingCache.find((item) => item["Booking ID"] === localId);
+    const selected = bookingCache.find((item) => item.bookingId === localId);
     if (selected) fillJobFormFromBooking(selected);
+  }
+
+  if (!bookingCache.length) {
+    setMessage("jobMessage", "No bookings found to select yet.");
+  } else {
+    setMessage("jobMessage", `Loaded ${bookingCache.length} booking(s).`, "success");
   }
 }
 
@@ -226,7 +274,7 @@ function onJobBookingSelected(event) {
   const selectedId = event.target.value;
   if (!selectedId) return;
 
-  const selected = bookingCache.find((item) => item["Booking ID"] === selectedId);
+  const selected = bookingCache.find((item) => item.bookingId === selectedId);
   if (!selected) {
     setMessage("jobMessage", "Selected booking details not found.", "error");
     return;
