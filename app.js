@@ -5,8 +5,8 @@ const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const TABLES = {
   booking: "customer_booking_register",
-  job: "job_register",
-  payment: "payment_register",
+  job: "job_sheet",
+  payment: "payment_sheet",
 };
 
 let authReady = false;
