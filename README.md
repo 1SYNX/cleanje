@@ -17,6 +17,10 @@ A mobile-first frontend project for GitHub Pages with Supabase integration.
 - Supabase write integration for booking, job, and payment modules.
 - Responsive card-based UI.
 
+## Supabase setup note
+
+This frontend uses `supabase.auth.signInAnonymously()` automatically (no login page) so inserts can pass RLS policies that allow the `authenticated` role. In Supabase, enable **Authentication → Providers → Anonymous Sign-Ins** and ensure your insert policies allow `authenticated` users.
+
 ## Supabase tables expected
 
 The app is configured to insert into:

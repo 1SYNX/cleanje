@@ -9,6 +9,8 @@ const TABLES = {
   payment: "payment_register",
 };
 
+let authReady = false;
+
 function getTodayString() {
   return new Date().toISOString().slice(0, 10);
 }
@@ -29,6 +31,31 @@ function fillBookingIdFields() {
   if (output && id) output.textContent = id;
   if (jobBookingId && id) jobBookingId.value = id;
   if (paymentBookingId && id) paymentBookingId.value = id;
+}
+
+async function ensureSupabaseAuth() {
+  if (authReady) return;
+
+  const {
+    data: { session },
+    error: sessionError,
+  } = await db.auth.getSession();
+
+  if (sessionError) {
+    throw new Error(`Unable to initialize Supabase session: ${sessionError.message}`);
+  }
+
+  if (!session) {
+    const { error: signInError } = await db.auth.signInAnonymously();
+
+    if (signInError) {
+      throw new Error(
+        `Unable to access booking service. Enable Supabase Anonymous Auth and authenticated RLS insert policy. ${signInError.message}`,
+      );
+    }
+  }
+
+  authReady = true;
 }
 
 async function generateBookingId() {
@@ -59,6 +86,7 @@ async function submitBooking(event) {
 
   try {
     setMessage("message", "Submitting booking...");
+    await ensureSupabaseAuth();
     const bookingId = await generateBookingId();
 
     const payload = {
@@ -95,49 +123,55 @@ async function submitJob(event) {
   event.preventDefault();
   const bookingId = document.getElementById("jobBookingId").value.trim();
 
-  const payload = {
-    booking_id: bookingId,
-    technician: document.getElementById("jobTechnician").value,
-    job_status: document.getElementById("jobStatus").value,
-    visit_date: document.getElementById("jobDate").value,
-    notes: document.getElementById("jobNotes").value.trim(),
-  };
+  try {
+    await ensureSupabaseAuth();
 
-  const { error } = await db.from(TABLES.job).insert([payload]);
-  if (error) {
+    const payload = {
+      booking_id: bookingId,
+      technician: document.getElementById("jobTechnician").value,
+      job_status: document.getElementById("jobStatus").value,
+      visit_date: document.getElementById("jobDate").value,
+      notes: document.getElementById("jobNotes").value.trim(),
+    };
+
+    const { error } = await db.from(TABLES.job).insert([payload]);
+    if (error) throw error;
+
+    localStorage.setItem("booking_id", bookingId);
+    setMessage("jobMessage", "Job update saved successfully.", "success");
+    event.target.reset();
+    fillBookingIdFields();
+  } catch (error) {
     setMessage("jobMessage", `Unable to save job update: ${error.message}`, "error");
-    return;
   }
-
-  localStorage.setItem("booking_id", bookingId);
-  setMessage("jobMessage", "Job update saved successfully.", "success");
-  event.target.reset();
-  fillBookingIdFields();
 }
 
 async function submitPayment(event) {
   event.preventDefault();
   const bookingId = document.getElementById("paymentBookingId").value.trim();
 
-  const payload = {
-    booking_id: bookingId,
-    amount: Number(document.getElementById("paymentAmount").value),
-    method: document.getElementById("paymentMethod").value,
-    payment_status: document.getElementById("paymentStatus").value,
-    payment_date: document.getElementById("paymentDate").value,
-    remarks: document.getElementById("paymentRemarks").value.trim(),
-  };
+  try {
+    await ensureSupabaseAuth();
 
-  const { error } = await db.from(TABLES.payment).insert([payload]);
-  if (error) {
+    const payload = {
+      booking_id: bookingId,
+      amount: Number(document.getElementById("paymentAmount").value),
+      method: document.getElementById("paymentMethod").value,
+      payment_status: document.getElementById("paymentStatus").value,
+      payment_date: document.getElementById("paymentDate").value,
+      remarks: document.getElementById("paymentRemarks").value.trim(),
+    };
+
+    const { error } = await db.from(TABLES.payment).insert([payload]);
+    if (error) throw error;
+
+    localStorage.setItem("booking_id", bookingId);
+    setMessage("paymentMessage", "Payment saved successfully.", "success");
+    event.target.reset();
+    fillBookingIdFields();
+  } catch (error) {
     setMessage("paymentMessage", `Unable to save payment: ${error.message}`, "error");
-    return;
   }
-
-  localStorage.setItem("booking_id", bookingId);
-  setMessage("paymentMessage", "Payment saved successfully.", "success");
-  event.target.reset();
-  fillBookingIdFields();
 }
 
 function setupPage() {
@@ -151,6 +185,12 @@ function setupPage() {
   dateInputIds.forEach((id) => {
     const dateInput = document.getElementById(id);
     if (dateInput && !dateInput.value) dateInput.value = getTodayString();
+  });
+
+  ensureSupabaseAuth().catch((err) => {
+    setMessage("message", err.message, "error");
+    setMessage("jobMessage", err.message, "error");
+    setMessage("paymentMessage", err.message, "error");
   });
 
   if (bookingForm) bookingForm.addEventListener("submit", submitBooking);
